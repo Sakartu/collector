@@ -9,10 +9,17 @@
 READER_DIR = '/media/READER/'
 #**********************************</Config>************************************
 
-import os
-import sys
-import shutil
-import sqlite3
+try:
+    import os
+    import sys
+    import shutil
+    import sqlite3
+except ImportError:
+    print u'Make sure the following modules are available:'
+    print u'- os'
+    print u'- sys'
+    print u'- shutil'
+    print u'- sqlite3'
 
 db_path = os.path.join(READER_DIR, 'Sony_Reader/database/books.db')
 db_backup = db_path + '.bak'
