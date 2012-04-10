@@ -1,35 +1,40 @@
 #!/usr/bin/env python
+
+#***********************************<Config>************************************
+#READER_DIR = 'e:/'
+READER_DIR = '/media/READER/'
+#**********************************</Config>************************************
+
 import os
 import sys
 import shutil
 import sqlite3
 
-#READER_DIR = 'e:/'
-READER_DIR = '/media/READER/'
-DB_PATH = os.path.join(READER_DIR, 'Sony_Reader/database/books.db')
-DB_BACKUP = DB_PATH + '.bak'
+db_path = os.path.join(READER_DIR, 'Sony_Reader/database/books.db')
+db_backup = db_path + '.bak'
 try:
-    shutil.copyfile(DB_PATH, DB_BACKUP)
+    shutil.copyfile(db_path, db_backup)
 except:
     print u'Could not create backup!'
     sys.exit(1)
 
 try:
 
-    DB_CONN = sqlite3.connect(DB_PATH)
+    DB_CONN = sqlite3.connect(db_path)
 
     # Find collectable dirs
-    # collectable_dirs = {}
+    print u'Collecting \'.collection\' locations...',
     collectable_files = {}
     for root, dirs, files in os.walk(READER_DIR):
         if '.collection' in files:
             name = root[root.rfind('/') + 1:]
-            # collectable_dirs[name] = root
             collectable_files[name] = files
             collectable_files[name].remove('.collection')
+    print u'done!'
         
     with DB_CONN as conn:
         c = conn.cursor()
+        print u'Finding file indexes...',
         for root, files in collectable_files.items():
             ids = []
             for f in files:
@@ -41,7 +46,8 @@ try:
                     continue
                 ids.append(results[0]) # Book only has one unique ID
             collectable_files[root] = ids
-
+        
+        print u'Building Collection database...'
         for root in collectable_files:
             # Make sure the collection exists
             c.execute('''SELECT _id FROM collection WHERE title = (?)''', 
@@ -66,10 +72,11 @@ try:
                     continue
                 c.execute('''INSERT INTO collections (collection_id, content_id,
                         added_order) VALUES (?, ?, ?)''', (coll_id, f_id, index))
-                print u'Added to collection "' + root + '"!'
+                print u'Added book to collection "' + root + '"!'
+        print u'All done, disconnect your reader!'
             
 except Exception, e:
     print u'Something went wrong:'
     print e
     print u'Reverting to backup!'
-    shutil.copyfile(DB_BACKUP, DB_PATH)
+    shutil.copyfile(db_backup, db_path)
