@@ -24,9 +24,10 @@ except ImportError:
 db_path = os.path.join(READER_DIR, 'Sony_Reader/database/books.db')
 db_backup = db_path + '.bak'
 try:
+    # Create a backup database file
     shutil.copyfile(db_path, db_backup)
 except:
-    print u'Could not create backup!'
+    print u'Could not create backup, exitting!'
     sys.exit(1)
 
 try:
