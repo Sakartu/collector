@@ -31,9 +31,6 @@ except:
     sys.exit(1)
 
 try:
-
-    DB_CONN = sqlite3.connect(db_path)
-
     # Find collectable dirs
     print u'Collecting \'.collection\' locations...',
     collectable_files = {}
@@ -44,7 +41,7 @@ try:
             collectable_files[name].remove('.collection')
     print u'done!'
         
-    with DB_CONN as conn:
+    with sqlite3.connect(db_path) as conn:
         c = conn.cursor()
         print u'Finding file indexes...',
         for root, files in collectable_files.items():
