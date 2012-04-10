@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 #***********************************<Config>************************************
+# READER_DIR specifies the path to the root directory of the Sony Reader. This
+# can either be a linux path or a Windows drive. This configuration parameter is
+# *not* optional, it must be configured for collector to work properly.
+
 #READER_DIR = 'e:/'
 READER_DIR = '/media/READER/'
 #**********************************</Config>************************************
