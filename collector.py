@@ -84,3 +84,4 @@ except Exception, e:
     print e
     print u'Reverting to backup!'
     shutil.copyfile(db_backup, db_path)
+    sys.exit(1)
