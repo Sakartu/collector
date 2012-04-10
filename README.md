@@ -28,3 +28,16 @@ A couple of sidenotes:
   "books.db" file from /path/to/READER/Sony_Reader/database/. WARNING: THIS WILL
   ERASE ALL INFORMATION ABOUT BOOKS ON YOUR DEVICE, INCLUDING INFORMATION ON
   COLLECTIONS ETC. USE WITH EXTREME CAUTION!
+
+Usage
+-----
+
+1. Make sure the path to your reader is set correctly in the collector.py file
+   (see the Config section at the top)
+2. Make sure all directories that you want to convert to Collections contain
+   .collection files
+3. Run collector using "python collector.py"
+4. Wait for a bit
+5. Disconnect your reader to reload the database
+6. ...
+7. Profit!
