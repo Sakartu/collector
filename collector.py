@@ -36,7 +36,7 @@ try:
     collectable_files = {}
     for root, dirs, files in os.walk(READER_DIR):
         if '.collection' in files:
-            name = root[root.rfind('/') + 1:]
+            name = root[root.rfind(os.path.sep) + 1:]
             collectable_files[name] = files
             collectable_files[name].remove('.collection')
     print u'done!'
