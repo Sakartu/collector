@@ -36,7 +36,8 @@ try:
     collectable_files = {}
     for root, dirs, files in os.walk(READER_DIR):
         if '.collection' in files:
-            name = root[root.rfind(os.path.sep) + 1:]
+            # Find the shortest name for the collection
+            name = root[max(root.rfind('/'), root.rfind('\\')) + 1:]
             collectable_files[name] = files
             collectable_files[name].remove('.collection')
     print u'done!'
@@ -59,6 +60,9 @@ try:
         print u'Building Collection database...'
         for root in collectable_files:
             # Make sure the collection exists
+            if 'y' not in raw_input('Process ' + root + '?').lower():
+                continue
+
             c.execute('''SELECT _id FROM collection WHERE title = (?)''', 
                     (root,))
             results = c.fetchone()
