@@ -60,7 +60,7 @@ try:
         print u'Building Collection database...'
         for root in collectable_files:
             # Make sure the collection exists
-            if 'y' not in raw_input('Process ' + root + '?').lower():
+            if 'y' not in raw_input('Process "' + root + '"?').lower():
                 continue
 
             c.execute('''SELECT _id FROM collection WHERE title = (?)''', 
