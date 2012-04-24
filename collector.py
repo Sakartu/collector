@@ -14,12 +14,14 @@ try:
     import sys
     import shutil
     import sqlite3
+    import subprocess
 except ImportError:
     print u'Make sure the following modules are available:'
     print u'- os'
     print u'- sys'
     print u'- shutil'
     print u'- sqlite3'
+    print u'- subprocess'
 
 db_path = os.path.join(READER_DIR, 'Sony_Reader/database/books.db')
 db_backup = db_path + '.bak'
@@ -27,7 +29,7 @@ try:
     # Create a backup database file
     shutil.copyfile(db_path, db_backup)
 except:
-    print u'Could not create backup, exitting!'
+    print u'Could not create backup, is the reader accessible?'
     sys.exit(1)
 
 try:
@@ -86,6 +88,13 @@ try:
                 c.execute('''INSERT INTO collections (collection_id, content_id,
                         added_order) VALUES (?, ?, ?)''', (coll_id, f_id, index))
                 print u'Added book to collection "' + root + '"!'
+
+    if os.name == 'posix':
+        conn.close()
+        print u'All done, trying to unmount...'
+        subprocess.check_call(['umount', READER_DIR])
+        print u'Done!'
+    else:
         print u'All done, disconnect your reader!'
             
 except Exception, e:
