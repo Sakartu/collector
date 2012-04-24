@@ -94,3 +94,4 @@ except Exception, e:
     print u'Reverting to backup!'
     shutil.copyfile(db_backup, db_path)
     sys.exit(1)
+    print u'If the database is malformed, reinstate it by removing the books.db file from your reader!'
