@@ -93,7 +93,10 @@ try:
     if os.name == 'posix':
         conn.close()
         print u'All done, trying to unmount...'
-        subprocess.check_call(['umount', READER_DIR])
+        try:
+            subprocess.check_call(['umount', READER_DIR])
+        except:
+            print u'Could not unmount, try manually!'
         print u'Done!'
     else:
         print u'All done, disconnect your reader!'
