@@ -4,6 +4,7 @@ try:
     import sys
     import shutil
     import sqlite3
+    import platform
     import subprocess
 except ImportError:
     print u'Make sure the following modules are available:'
@@ -67,7 +68,8 @@ try:
             c.execute('''SELECT _id FROM collection WHERE title = (?)''', (root,))
             results = c.fetchone()
             if not results:
-                c.execute('''INSERT OR IGNORE INTO collection (title, kana_title, source_id, uuid) VALUES (?, ?, ?, ?)''', (root, '', 0, ''))
+                c.execute('''INSERT OR IGNORE INTO collection
+                          (title, kana_title, source_id, uuid) VALUES (?, ?, ?, ?)''', (root, '', 0, ''))
                 c.execute('''SELECT _id FROM collection WHERE title = (?)''', (root,))
                 results = c.fetchone()
                 if not results:
@@ -79,14 +81,18 @@ try:
                 if c.fetchone():
                     print u'Book already in collection, moving on!'
                     continue
-                c.execute('''INSERT INTO collections (collection_id, content_id, added_order) VALUES (?, ?, ?)''', (coll_id, f_id, index))
+                c.execute('''INSERT INTO collections
+                          (collection_id, content_id, added_order) VALUES (?, ?, ?)''', (coll_id, f_id, index))
                 print u'Added book to collection "' + root + '"!'
 
     if os.name == 'posix':
         conn.close()
         print u'All done, trying to unmount...'
         try:
-            subprocess.check_call(['umount', READER_DIR])
+            if platform.mac_ver():
+                subprocess.check_call(['/usr/sbin/diskutil', 'umount', READER_DIR])
+            else:
+                subprocess.check_call(['/bin/umount', READER_DIR])
         except:
             print u'Could not unmount, try manually!'
         print u'Done!'
@@ -99,5 +105,3 @@ except Exception, e:
     print u'Reverting to backup!'
     shutil.copyfile(db_backup, db_path)
     sys.exit(1)
-    print u'If the database is malformed, reinstate it by removing the '
-    'books.db file from your reader!'
