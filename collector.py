@@ -51,6 +51,8 @@ try:
         for root, files in collectable_files.items():
             ids = []
             for f in files:
+                if not f.endswith(('.epub', '.txt', '.pdf')):
+                    continue
                 c.execute('''SELECT _id FROM books WHERE file_name = (?) OR file_path LIKE (?)''', (f, "%" + f + "%",))
                 results = c.fetchone()
                 if not results:
@@ -59,12 +61,18 @@ try:
                 ids.append(results[0])  # Book only has one unique ID
             collectable_files[root] = ids
 
-        print u'Building Collection database...'
-        for root in collectable_files:
-            # Make sure the collection exists
-            if 'y' not in raw_input('Process "' + root + '"? ').lower():
-                continue
+        print u'done!\nBuilding Collection database...'
+        ask_all = 'b'
+        while not ('y' in ask_all or 'n' in ask_all or ask_all == ''):
+            ask_all = raw_input('Do you want to be asked whether to process each collection? [no]: ')
+        if not ask_all:
+            ask_all = 'n'
 
+        for root in collectable_files:
+            if 'y' in ask_all and 'y' not in raw_input('Process "' + root + '"? ').lower():
+                continue
+            print 'Processing ' + root + '...'
+            # Make sure the collection exists
             c.execute('''SELECT _id FROM collection WHERE title = (?)''', (root,))
             results = c.fetchone()
             if not results:
@@ -85,8 +93,9 @@ try:
                           (collection_id, content_id, added_order) VALUES (?, ?, ?)''', (coll_id, f_id, index))
                 print u'Added book to collection "' + root + '"!'
 
-    if os.name == 'posix':
+    if os.name == 'posix':  # Linux or OSX
         conn.close()
+        sys.exit()
         print u'All done, trying to unmount...'
         try:
             if platform.mac_ver():
