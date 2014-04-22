@@ -95,7 +95,6 @@ try:
 
     if os.name == 'posix':  # Linux or OSX
         conn.close()
-        sys.exit()
         print u'All done, trying to unmount...'
         try:
             if platform.mac_ver():
