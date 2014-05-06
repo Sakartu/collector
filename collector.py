@@ -98,7 +98,7 @@ try:
         print u'All done, trying to unmount...'
         try:
             if platform.mac_ver():
-                subprocess.check_call(['/usr/sbin/diskutil', 'umount', READER_DIR])
+                subprocess.check_call(['/usr/sbin/diskutil', 'unmountDisk', READER_DIR])
             else:
                 subprocess.check_call(['/bin/umount', READER_DIR])
         except:
