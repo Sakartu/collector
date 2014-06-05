@@ -47,6 +47,13 @@ try:
 
     with sqlite3.connect(db_path) as conn:
         c = conn.cursor()
+        print u'Creating recently read trigger...',
+        c.execute('''CREATE TRIGGER IF NOT EXISTS recently_opened_trigger AFTER UPDATE OF reading_time ON books
+ BEGIN
+ UPDATE books SET added_date = 0 WHERE _id = new._id;
+ UPDATE books SET added_date = reading_time WHERE reading_time NOT NULL AND _id <> new._id;
+ END''')
+        print u'done!'
         print u'Finding file indexes...',
         for root, files in collectable_files.items():
             ids = []
